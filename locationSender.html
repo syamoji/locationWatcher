@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      html, body {
+        height: 80%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <title>
+        locationSender
+    </title>
+    <body>
+        <!-- ログ表示用領域 -->
+        <div id="mes">
+            
+        </div>
+    <br>
+    <button onclick="posStart();">記録開始</button>
+    <br>
+    <br>
+    
+    <script src="https://www.gstatic.com/firebasejs/5.0.2/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "<YOUR API KEY>",
+        authDomain: "<YOUR DOMAIN>",
+        databaseURL: "<YOUR DATABASE URL>",
+        projectId: "<YOUR PROJECT ID>",
+        storageBucket: "<YOUR STORAGE BUCKET>",
+        messagingSenderId: "<YOUR MESSAGING SENDER ID>"
+      };
+      firebase.initializeApp(config);
+      
+      // firebaseデータ参照準備 	
+      var messagesRef = firebase.database().ref().child('messages')
+    </script>
+    <script>
+
+    // クリック時にコールされる
+    function posStart() {
+        setInterval(getNowPos, 3000);
+    }
+	
+    // 場所を保存
+	function getNowPos() {
+	    navigator.geolocation.getCurrentPosition(
+         function (position) {
+           var gettime = position.timestamp;  
+           var getlat = position.coords.latitude;
+           var getlng = position.coords.longitude;
+           var getalt = position.coords.altitude;
+           var getacc = position.coords.accuracy;
+           var getaltacc = position.coords.altitudeAccuracy;
+           var gethead = position.coords.heading;
+           var getspeed = position.coords.speed;
+           mesText = "タイムスタンプ："+gettime+"\n現在の緯度："+getlat+"\n現在の経度："+getlng;
+           var mesTag = document.getElementById("mes");
+           mesTag.innerHTML += "<br>" + mesText;
+           // firebaseへ送信
+           messagesRef.push({
+            timestamp: gettime,
+            lat: getlat,
+            lng: getlng
+           });
+	     },
+	     function (error) {
+	         
+	     }
+	    );
+	}
+	        
+	   // 現在地取得
+	   if( navigator.geolocation ){
+         //Geolocation APIに対応している端末向け処理
+         navigator.geolocation.getCurrentPosition(successCall,errorCall);
+         function successCall(position) {
+           alert("準備完了\nタイムスタンプ："+gettime+"\n現在の緯度："+getlat+"\n現在の経度："+getlng+"\n高度:"+getalt+"\n緯経度誤差:"+getacc+"\n高度誤差:"+getaltacc+"\n方角："+gethead+"\n速度："+getspeed);
+         }
+
+         function errorCall(errorcode) {
+           switch(errorcode.code)     {
+           case 1:
+             var errmsg = "位置情報の利用がキャンセルされました（OSの位置情報が許可されていますか？）";
+             break;
+           case 2:
+             var errmsg = "現在地が取得できませんでした";
+             break;
+           case 3:
+             var errmsg = "接続がタイムアウトしました";
+             break;
+           }
+           console.log("Error! : " + errmsg);  
+           
+         }
+        } else {
+          //Geolocation APIに対応していない端末向け処理
+          alert("お使いの端末は現在地を取得できないようです");
+        }
+    </script>
+
+  </body>
+</html>
