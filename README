@@ -4,4 +4,4 @@ configの部分を自身のfirebase情報に更新してください。
 
 3秒に1度locationSender.htmlを開いている端末の位置情報をfirebaseに送信し、mapViewer.htmlで閲覧します。
 
-![サンプル画像](https://raw.githubusercontent.com/syamoji/locationWatcher/master/images/plotSample.png)
+<img src="https://raw.githubusercontent.com/syamoji/locationWatcher/master/images/plotSample.png" alt="サンプル画像">
